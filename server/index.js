@@ -19,7 +19,9 @@ app.use(helmet());
 app.use(cors());
 
 app.get('/api/v1/phones', async (req, res) => {
-  const allPhones = await phone.findAll();
+  const allPhones = await phone.findAll({
+    // done: false
+  });
 
   return res.status(200).json({ phones: allPhones });
 });

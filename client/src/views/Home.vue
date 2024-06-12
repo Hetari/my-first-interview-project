@@ -19,12 +19,21 @@
             v-for="(phone, index) in data"
             :key="phone.id"
             class="flex justify-start items-center gap-2">
-            <div class="w-[5px] h-[35px] bg-gray-400"></div>
+            <div
+              class="w-[5px] h-[35px]"
+              :class="{
+                'bg-red-500': phone.closed == true,
+                'bg-green-500': phone.done == true,
+                'bg-yellow-500': phone.busy == true,
+                'bg-gray-400': !phone.closed && !phone.busy && !phone.done
+              }"></div>
 
-            <ul class="px-10 flex justify-between w-full">
-              <li class="font-bold">{{ phone.phone }}</li>
-              <li class="font-bold">{{ phoneAttempt['attempt'] }}</li>
-            </ul>
+            <router-link :to="`/phone/${phone.phone}`">
+              <ul class="px-10 flex justify-between w-full">
+                <li class="font-bold">{{ phone.phone }}</li>
+                <li class="font-bold">{{ phoneAttempt['attempt'] }}</li>
+              </ul>
+            </router-link>
           </div>
         </div>
       </div>

@@ -6,6 +6,18 @@ const PhoneModel = sequelize.define('phones', {
     type: DataTypes.STRING,
     unique: true
   },
+  done: {
+    type: DataTypes.BOOLEAN,
+    default: false
+  },
+  closed: {
+    type: DataTypes.BOOLEAN,
+    default: false
+  },
+  busy: {
+    type: DataTypes.BOOLEAN,
+    default: false
+  },
   phone: {
     type: DataTypes.STRING,
     unique: true
