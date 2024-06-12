@@ -37,6 +37,7 @@
         :placeholder="i.placeholder" />
 
       <DateComponent
+        :placeholder="''"
         label="End Date"
         @input="emitData('date', $event)" />
     </section>

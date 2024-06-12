@@ -1,0 +1,3 @@
+const phoneAttempt = {};
+
+export { phoneAttempt };

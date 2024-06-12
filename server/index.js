@@ -18,8 +18,8 @@ app.use(express.json());
 app.use(helmet());
 app.use(cors());
 
-app.get('/api/v1/getPhones', (req, res) => {
-  const allPhones = phone.findAll();
+app.get('/api/v1/phones', async (req, res) => {
+  const allPhones = await phone.findAll();
 
   return res.status(200).json({ phones: allPhones });
 });
