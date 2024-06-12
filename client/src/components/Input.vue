@@ -1,5 +1,5 @@
 <template>
-  <div class="w-fit">
+  <div class="">
     <p class="font-bold text-blue-900">{{ label }}</p>
     <input
       v-model="data"
