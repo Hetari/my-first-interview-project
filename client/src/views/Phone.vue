@@ -67,6 +67,7 @@
   };
 
   onMounted(() => {
+    console.log('S');
     axios.get('http://localhost:3000/api/v1/phones').then((res) => {
       if (res.data) {
         data.value = res.data.phones;
