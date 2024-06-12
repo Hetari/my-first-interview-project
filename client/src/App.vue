@@ -48,7 +48,9 @@
                   'bg-gray-400': !phone.closed && !phone.busy && !phone.done
                 }"></div>
 
-              <ul class="w-full px-10 flex justify-between cursor-pointer">
+              <ul
+                @click="clickedPhone(phone.id)"
+                class="w-full px-10 flex justify-between cursor-pointer">
                 <li class="font-bold">{{ phone.phone }}</li>
                 <li class="font-bold text-center w-24">
                   {{ phone.attempt }}
@@ -66,11 +68,139 @@
         </div>
 
         <div
-          class="bg-gray-100 h-[100%] rounded-ee-lg rounded-es-lg flex justify-center items-center">
-          <div v-if="isPhoneSelected"></div>
+          class="bg-gray-100 h-[100%] rounded-ee-lg rounded-es-lg space-y-10 w-full p-10">
+          <div
+            v-if="isPhoneSelected"
+            class="space-y-10">
+            <!-- <section > -->
+            <div class="w-full space-y-5">
+              <p class="text-blue-900 font-bold text-xl">information:</p>
+
+              <div class="flex gap-10">
+                <Input
+                  class="border-b w-1/2"
+                  @input="emitData('name', $event)"
+                  label=""
+                  placeholder="name" />
+
+                <Input
+                  class="border-b w-1/2"
+                  label=""
+                  placeholder="llll" />
+              </div>
+
+              <div class="flex gap-10">
+                <Input
+                  class="border-b w-1/2"
+                  label=""
+                  placeholder="aaaa" />
+
+                <Input
+                  class="border-b w-1/2"
+                  label=""
+                  placeholder="project name" />
+              </div>
+            </div>
+
+            <div class="w-full space-y-5">
+              <p class="text-blue-900 font-bold text-xl">Questions:</p>
+
+              <div class="flex w-full gap-5">
+                <div class="w-full">
+                  <p class="text-blue-900 font-bold">
+                    الجنس؟
+                    <span class="text-red-500">*</span>
+                  </p>
+                  <Multiselect
+                    class="w-11/12 p-1"
+                    mode="single"
+                    placeholder="Search and select your answer"
+                    :searchable="true"
+                    :close-on-select="false"
+                    v-model="gender"
+                    :options="genderOptions" />
+                </div>
+
+                <div class="w-full">
+                  <p class="text-blue-900 font-bold">
+                    من أين حصلت على القسيمة؟
+                    <span class="text-red-500">*</span>
+                  </p>
+                  <Multiselect
+                    class="w-11/12 p-1"
+                    mode="tags"
+                    placeholder="Search and select your answer"
+                    :searchable="true"
+                    :close-on-select="false"
+                    v-model="discount"
+                    :options="discountOptions" />
+                </div>
+
+                <div class="w-full">
+                  <p class="text-blue-900 font-bold">
+                    كم دفعتي قيمة القسيمة؟
+                    <span class="text-red-500">*</span>
+                  </p>
+                  <Input
+                    class="w-11/12"
+                    label=""
+                    placeholder="value" />
+                </div>
+              </div>
+
+              <div class="flex w-full">
+                <div class="w-full">
+                  <p class="text-blue-900 font-bold">
+                    هل شرحت لكي الموزعة عن الخدمات التي تقدمها القسيمة؟
+                    <span class="text-red-500">*</span>
+                  </p>
+                  <select
+                    v-model="explained"
+                    class="w-11/12 p-3">
+                    <option
+                      disabled
+                      selected>
+                      select an answer
+                    </option>
+                    <option value="female">انثى</option>
+                    <option value="male">ذكر</option>
+                  </select>
+                </div>
+
+                <div class="w-full">
+                  <p class="text-blue-900 font-bold">
+                    هل تم تقديم مرفق صحي معين للزيارة؟
+                    <span class="text-red-500">*</span>
+                  </p>
+                  <select
+                    v-model="attached"
+                    class="w-11/12 p-3">
+                    <option
+                      disabled
+                      selected>
+                      select an answer
+                    </option>
+                    <option value="female">انثى</option>
+                    <option value="male">ذكر</option>
+                  </select>
+                </div>
+
+                <div class="w-full"></div>
+              </div>
+            </div>
+
+            <div
+              @click="sendIt"
+              class="text-end">
+              <button class="bg-blue-900 text-white px-5 py-3 rounded-lg">
+                Save
+              </button>
+            </div>
+            <!-- </section> -->
+          </div>
           <p
             v-else
-            class="text-xl text-gray-400">
+            class="text-xl text-gray-400 flex justify-center items-center h-full">
             Waiting for new call...
           </p>
         </div>
@@ -84,10 +214,14 @@
   import DateComponent from './components/DateComponent.vue';
   import Header from './components/Header.vue';
   import Badges from './components/Badges.vue';
+
+  import Multiselect from '@vueform/multiselect';
+
   import { onMounted, reactive, ref, watch } from 'vue';
   import axios from 'axios';
 
   const data = ref(null);
+  const phone = ref(null);
   const filteredData = ref(null);
   const search = ref('');
   const isPhoneSelected = ref(false);
@@ -98,12 +232,49 @@
     phone: ''
   });
 
+  // multiselect
+  const genderOptions = [
+    {
+      label: 'ذكر',
+      value: 'male'
+    },
+    {
+      label: 'انثى',
+      value: 'female'
+    },
+    {
+      label: 'مجهول',
+      value: 'other'
+    }
+  ];
+  const discountOptions = [
+    {
+      label: 'من صديق',
+      value: 'friend'
+    },
+    {
+      label: 'من عائلة',
+      value: 'family'
+    },
+    {
+      label: 'من النت',
+      value: 'online'
+    }
+  ];
+  const gender = defineModel('gender');
+  const discount = defineModel('discount');
+
   const emitData = (data, value) => {
     if (data == 'search') {
       search.value = value;
     } else {
       form[data] = value;
     }
+  };
+
+  const clickedPhone = (id) => {
+    isPhoneSelected.value = true;
+    getPhone(id);
   };
 
   const getAllPhones = () => {
@@ -116,6 +287,14 @@
       }
     });
   };
+  const getPhone = (id) => {
+    axios.get(`http://localhost:3000/api/v1/phones/${id}`).then((res) => {
+      if (res.data) {
+        phone.value = res.data;
+      }
+    });
+  };
+
   onMounted(() => {
     getAllPhones();
   });
@@ -153,3 +332,23 @@
     }
   ];
 </script>
+
+<style src="@vueform/multiselect/themes/default.css"></style>
+
+<style>
+  .multiselect-option.is-selected,
+  .multiselect-tag {
+    background-color: rgb(13, 71, 161);
+  }
+
+  .multiselect-option.is-selected.is-pointed {
+    background-color: rgb(9, 57, 129);
+  }
+
+  .multiselect-search,
+  .multiselect-tags-search,
+  .multiselect-dropdown,
+  .multiselect {
+    background-color: rgb(229 231 235);
+  }
+</style>

@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-  import { onMounted, watch } from 'vue';
+  import { watch } from 'vue';
 
   let data = defineModel();
   const emit = defineEmits(['input']);
