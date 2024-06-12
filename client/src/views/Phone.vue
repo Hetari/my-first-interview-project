@@ -198,7 +198,6 @@
       </section>
     </div>
   </section>
-  {{ currentPhone }}
 </template>
 
 <script setup>
@@ -206,6 +205,13 @@
   import { onMounted, onUnmounted, onUpdated, reactive, ref, watch } from 'vue';
   import axios from 'axios';
   import router from '../router/index.js';
+
+  router.beforeEach((to, from) => {
+    const id = router.currentRoute.value.params.id;
+    getAllPhones(id);
+    getPhone(id);
+    return true;
+  });
 
   const currentPhone = ref({});
   const phone = ref({});
@@ -230,16 +236,16 @@
     // if (!form.title || !form.name) {
 
     // }
-    // if (
-    //   !gender.value ||
-    //   !explained.value ||
-    //   !payment.value ||
-    //   !attached.value ||
-    //   !discount.value
-    // ) {
-    //   alert('please fill all fields');
-    //   return;
-    // }
+    if (
+      !gender.value ||
+      !explained.value ||
+      !payment.value ||
+      !attached.value ||
+      !discount.value
+    ) {
+      alert('please fill all fields');
+      return;
+    }
 
     axios
       .post('http://localhost:3000/api/v1/phones', {
@@ -276,9 +282,9 @@
       }
     });
   };
+
   onMounted(() => {
     const id = router.currentRoute.value.params.id;
-
     getAllPhones(id);
     getPhone(id);
   });
