@@ -4,6 +4,7 @@
     <input
       v-model="data"
       type="date"
+      :placeholder="new Date().toISOString().split('T')[0]"
       class="bg-gray-100 rounded w-full p-2 text-blue-900 outline-none focus:outline-none" />
   </div>
 </template>

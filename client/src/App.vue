@@ -1,8 +1,6 @@
 <template>
-  {{ form }}
-  <main
-    class="px-4 py-2 sm:px-6 sm:py-4 md:px-8 md:py-6 lg:px-12 lg:py-8 space-y-10">
-    <header class="w-full flex justify-start items-center gap-4">
+  <main class="px-4 py-2 sm:px-6 sm:py-4 md:px-8 md:py-6 lg:px-12 lg:py-8">
+    <header class="w-full flex justify-start items-center gap-4 mb-10">
       <svg
         class="cursor-pointer bg-gray-200 rounded-full"
         xmlns="http://www.w3.org/2000/svg"
@@ -30,7 +28,7 @@
       </h1>
     </header>
 
-    <section class="flex gap-4">
+    <section class="flex gap-4 mb-2">
       <Input
         v-for="i in inputsFields"
         :label="i.title"
@@ -40,6 +38,28 @@
       <DateComponent
         label="End Date"
         @input="emitData('date', $event)" />
+    </section>
+
+    <section class="flex justify-start items-center gap-5">
+      <div class="flex justify-start items-center gap-2">
+        <div class="size-3 rounded-full bg-gray-500"></div>
+        <p class="text-gray-500">Awaiting</p>
+      </div>
+
+      <div class="flex justify-start items-center gap-2">
+        <div class="size-3 rounded-full bg-yellow-500"></div>
+        <p class="text-gray-500">Busy/Not Answered</p>
+      </div>
+
+      <div class="flex justify-start items-center gap-2">
+        <div class="size-3 rounded-full bg-red-500"></div>
+        <p class="text-gray-500">Closed</p>
+      </div>
+
+      <div class="flex justify-start items-center gap-2">
+        <div class="size-3 rounded-full bg-green-500"></div>
+        <p class="text-gray-500">Recalled incoming</p>
+      </div>
     </section>
     <RouterView />
   </main>
