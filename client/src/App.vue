@@ -1,5 +1,6 @@
 <template>
-  <main class="px-4 py-2 sm:px-6 sm:py-4 md:px-8 md:py-6 lg:px-12 lg:py-8">
+  <main
+    class="h-screen px-4 py-2 sm:px-6 sm:py-4 md:px-8 md:py-6 lg:px-12 lg:py-8">
     <header class="w-full flex justify-start items-center gap-4 mb-10">
       <svg
         class="cursor-pointer bg-gray-200 rounded-full"

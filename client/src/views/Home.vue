@@ -1,10 +1,10 @@
 <template>
-  <section class="grid grid-cols-3 mt-5 gap-5">
-    <div>
+  <section class="grid grid-cols-5 mt-5 gap-5">
+    <div class="col-span-1">
       <div
-        class="bg-gray-200 rounded-ss-lg rounded-se-lg px-10 flex justify-between">
+        class="bg-gray-200 h-10 rounded-ss-lg rounded-se-lg px-10 flex justify-between items-center">
         <p class="text-blue-900 font-bold text-lg">Phones</p>
-        <p class="text-blue-900 font-bold text-lg">Attempts (0)</p>
+        <p class="text-blue-900 font-bold text-lg text">Attempts (0)</p>
       </div>
 
       <div class="bg-gray-100 pb-5 rounded-ee-lg rounded-es-lg">
@@ -29,7 +29,14 @@
       </div>
     </div>
 
-    <div class="col-span-2">sec 2</div>
+    <div class="col-span-4 h-full">
+      <div class="bg-gray-200 h-10 rounded-ss-lg rounded-se-lg"></div>
+
+      <div
+        class="bg-gray-100 h-[220%] rounded-ee-lg rounded-es-lg flex justify-center items-center">
+        <p class="text-xl text-gray-400">Waiting for new call...</p>
+      </div>
+    </div>
   </section>
 </template>
 
