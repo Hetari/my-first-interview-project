@@ -198,6 +198,7 @@
       </section>
     </div>
   </section>
+  {{ currentPhone }}
 </template>
 
 <script setup>
@@ -229,20 +230,21 @@
     // if (!form.title || !form.name) {
 
     // }
-    if (
-      !gender.value ||
-      !explained.value ||
-      !payment.value ||
-      !attached.value ||
-      !discount.value
-    ) {
-      alert('please fill all fields');
-      return;
-    }
+    // if (
+    //   !gender.value ||
+    //   !explained.value ||
+    //   !payment.value ||
+    //   !attached.value ||
+    //   !discount.value
+    // ) {
+    //   alert('please fill all fields');
+    //   return;
+    // }
 
     axios
       .post('http://localhost:3000/api/v1/phones', {
         ...form,
+        phoneId: currentPhone.value.id,
         gender: gender.value,
         explained: explained.value,
         payment: payment.value,

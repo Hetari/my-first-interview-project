@@ -11,6 +11,8 @@ import sequelize from './db/index.js';
 import phone from './db/phoneModel.js';
 
 import xlsx from 'xlsx';
+import PhoneModel from './db/phoneModel.js';
+import { where } from 'sequelize';
 
 const app = express();
 app.set('trust proxy', 1);
@@ -28,7 +30,30 @@ app.get('/api/v1/phones', async (req, res) => {
 
 app.post('/api/v1/phones', async (req, res) => {
   const all = req.body;
-  console.log(all);
+
+  if (
+    !all.phoneId ||
+    !all.gender ||
+    !all.explained ||
+    !all.payment ||
+    !all.attached ||
+    !all.discount
+  ) {
+    return res.status(400).send('Bad request!');
+  }
+
+  const result = await phone.findOne({
+    where: {
+      id: all.phoneId
+    }
+  });
+
+  if (result) {
+    result.update({
+      closed: true
+    });
+  }
+
   return res.status(200);
 });
 
