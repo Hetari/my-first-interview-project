@@ -1,33 +1,7 @@
 <template>
   <main
     class="h-screen px-4 py-2 sm:px-6 sm:py-4 md:px-8 md:py-6 lg:px-12 lg:py-8">
-    <header class="w-full flex justify-start items-center gap-4 mb-10">
-      <svg
-        class="cursor-pointer bg-gray-200 rounded-full"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        width="32"
-        height="32"
-        color="#000000"
-        fill="none">
-        <circle
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="1.5" />
-        <path
-          d="M13.5 16C13.5 16 10.5 13.054 10.5 12C10.5 10.9459 13.5 8 13.5 8"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round" />
-      </svg>
-      <h1 class="text-3xl text-blue-900">
-        Welcome to <span class="text-yellow-500"> Sondosjadoo Meto </span>
-        | Outgoing Task Details
-      </h1>
-    </header>
+    <Header />
 
     <section class="flex gap-4 mb-2">
       <Input
@@ -42,37 +16,81 @@
         @input="emitData('date', $event)" />
     </section>
 
-    <section class="flex justify-start items-center gap-5">
-      <div class="flex justify-start items-center gap-2">
-        <div class="size-3 rounded-full bg-gray-500"></div>
-        <p class="text-gray-500">Awaiting</p>
+    <Badges />
+
+    <section class="grid grid-cols-5 mt-5 gap-5">
+      <div class="col-span-1 max-xl:col-span-2">
+        <div
+          class="bg-gray-200 h-10 rounded-ss-lg rounded-se-lg px-10 flex justify-between items-center">
+          <p class="text-blue-900 font-bold text-lg">Phones</p>
+          <p class="text-blue-900 font-bold text-lg text">Attempts (0)</p>
+        </div>
+
+        <div class="bg-gray-100 pb-5 rounded-ee-lg rounded-es-lg">
+          <Input
+            class="w-full py-3 ps-5"
+            label=""
+            placeholder="Search"
+            @input="emitData('search', $event)" />
+
+          <div class="space-y-4 w-full">
+            <div
+              v-for="phone in filteredData"
+              :key="phone.id"
+              class="flex justify-start items-center gap-2 w-full">
+              <!-- TODO: do it batter -->
+              <div
+                class="w-[5px] h-[35px]"
+                :class="{
+                  'bg-red-500': phone.closed == true,
+                  'bg-green-500': phone.done == true,
+                  'bg-yellow-500': phone.busy == true,
+                  'bg-gray-400': !phone.closed && !phone.busy && !phone.done
+                }"></div>
+
+              <ul class="w-full px-10 flex justify-between cursor-pointer">
+                <li class="font-bold">{{ phone.phone }}</li>
+                <li class="font-bold text-center w-24">
+                  {{ phone.attempt }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="flex justify-start items-center gap-2">
-        <div class="size-3 rounded-full bg-yellow-500"></div>
-        <p class="text-gray-500">Busy/Not Answered</p>
-      </div>
+      <div class="col-span-4 max-xl:col-span-3 h-full">
+        <div class="bg-gray-200 h-10 rounded-ss-lg rounded-se-lg">
+          <!-- TODO: show the time here -->
+          <div v-if="isPhoneSelected"></div>
+        </div>
 
-      <div class="flex justify-start items-center gap-2">
-        <div class="size-3 rounded-full bg-red-500"></div>
-        <p class="text-gray-500">Closed</p>
-      </div>
-
-      <div class="flex justify-start items-center gap-2">
-        <div class="size-3 rounded-full bg-green-500"></div>
-        <p class="text-gray-500">Recalled incoming</p>
+        <div
+          class="bg-gray-100 h-[100%] rounded-ee-lg rounded-es-lg flex justify-center items-center">
+          <div v-if="isPhoneSelected"></div>
+          <p
+            v-else
+            class="text-xl text-gray-400">
+            Waiting for new call...
+          </p>
+        </div>
       </div>
     </section>
-    <RouterView />
   </main>
 </template>
 
 <script setup>
   import Input from './components/Input.vue';
   import DateComponent from './components/DateComponent.vue';
+  import Header from './components/Header.vue';
+  import Badges from './components/Badges.vue';
+  import { onMounted, reactive, ref, watch } from 'vue';
+  import axios from 'axios';
 
-  import { reactive } from 'vue';
-
+  const data = ref(null);
+  const filteredData = ref(null);
+  const search = ref('');
+  const isPhoneSelected = ref(false);
   const form = reactive({
     title: '',
     department: '',
@@ -81,8 +99,32 @@
   });
 
   const emitData = (data, value) => {
-    form[data] = value;
+    if (data == 'search') {
+      search.value = value;
+    } else {
+      form[data] = value;
+    }
   };
+
+  const getAllPhones = () => {
+    axios.get('http://localhost:3000/api/v1/phones').then((res) => {
+      if (res.data) {
+        data.value = res.data.phones;
+        filteredData.value = res.data.phones.sort(
+          (a, b) => b.attempt - a.attempt
+        );
+      }
+    });
+  };
+  onMounted(() => {
+    getAllPhones();
+  });
+
+  watch(search, (newVal) => {
+    filteredData.value = data.value.filter((phone) => {
+      return phone.phone.includes(newVal);
+    });
+  });
 
   const inputsFields = [
     {

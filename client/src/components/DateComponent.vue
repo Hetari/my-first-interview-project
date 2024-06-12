@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: fix the style -->
   <div class="w-fit">
     <p class="font-bold text-blue-900">{{ label }}</p>
     <input
