@@ -26,6 +26,12 @@ app.get('/api/v1/phones', async (req, res) => {
   return res.status(200).json({ phones: allPhones });
 });
 
+app.post('/api/v1/phones', async (req, res) => {
+  const all = req.body;
+  console.log(all);
+  return res.status(200);
+});
+
 app.get('/api/v1/phones/:id', async (req, res) => {
   const id = req.params.id;
   const getPhone = await phone.findOne({

@@ -1,6 +1,4 @@
 <template>
-  phone:
-  {{ phone }}
   <section class="grid grid-cols-5 mt-5 gap-5">
     <div class="col-span-1">
       <div
@@ -13,8 +11,8 @@
         <Input
           class="w-full py-3 ps-5"
           label=""
-          placeholder="Search"
-          @input="emitData('search', $event)" />
+          @input="emitData('search', $event)"
+          placeholder="Search" />
 
         <div class="space-y-4">
           <div
@@ -67,6 +65,7 @@
           <div class="flex gap-10">
             <Input
               class="border-b w-1/2"
+              @input="emitData('name', $event)"
               label=""
               placeholder="name" />
 
@@ -98,7 +97,9 @@
                 الجنس؟
                 <span class="text-red-500">*</span>
               </p>
-              <select class="w-11/12 p-3">
+              <select
+                v-model="gender"
+                class="w-11/12 p-3">
                 <option
                   disabled
                   selected>
@@ -114,7 +115,9 @@
                 من أين حصلت على القسيمة؟
                 <span class="text-red-500">*</span>
               </p>
-              <select class="w-11/12 p-3">
+              <select
+                v-model="discount"
+                class="w-11/12 p-3">
                 <option
                   disabled
                   selected>
@@ -130,7 +133,9 @@
                 كم دفعتي قيمة القسيمة؟
                 <span class="text-red-500">*</span>
               </p>
-              <select class="w-11/12 p-3">
+              <select
+                v-model="payment"
+                class="w-11/12 p-3">
                 <option
                   disabled
                   selected>
@@ -148,7 +153,9 @@
                 هل شرحت لكي الموزعة عن الخدمات التي تقدمها القسيمة؟
                 <span class="text-red-500">*</span>
               </p>
-              <select class="w-11/12 p-3">
+              <select
+                v-model="explained"
+                class="w-11/12 p-3">
                 <option
                   disabled
                   selected>
@@ -164,7 +171,9 @@
                 هل تم تقديم مرفق صحي معين للزيارة؟
                 <span class="text-red-500">*</span>
               </p>
-              <select class="w-11/12 p-3">
+              <select
+                v-model="attached"
+                class="w-11/12 p-3">
                 <option
                   disabled
                   selected>
@@ -177,6 +186,14 @@
 
             <div class="w-full"></div>
           </div>
+        </div>
+
+        <div
+          @click="sendIt"
+          class="text-end">
+          <button class="bg-blue-900 text-white px-5 py-3 rounded-lg">
+            Save
+          </button>
         </div>
       </section>
     </div>
@@ -192,13 +209,49 @@
   const currentPhone = ref({});
   const phone = ref({});
   const form = reactive({
-    search: ''
+    search: '',
+    title: '',
+    name: ''
   });
 
   const data = ref(null);
+  let gender = defineModel('gender');
+  let explained = defineModel('explained');
+  let payment = defineModel('payment');
+  let attached = defineModel('attached');
+  let discount = defineModel('discount');
 
   const emitData = (data, value) => {
     form[data] = value;
+  };
+
+  const sendIt = () => {
+    // if (!form.title || !form.name) {
+
+    // }
+    if (
+      !gender.value ||
+      !explained.value ||
+      !payment.value ||
+      !attached.value ||
+      !discount.value
+    ) {
+      alert('please fill all fields');
+      return;
+    }
+
+    axios
+      .post('http://localhost:3000/api/v1/phones', {
+        ...form,
+        gender: gender.value,
+        explained: explained.value,
+        payment: payment.value,
+        attached: attached.value,
+        discount: discount.value
+      })
+      .then((res) => {
+        alert(res.data.message);
+      });
   };
 
   const getAllPhones = (id) => {
@@ -223,6 +276,7 @@
   };
   onMounted(() => {
     const id = router.currentRoute.value.params.id;
+
     getAllPhones(id);
     getPhone(id);
   });
