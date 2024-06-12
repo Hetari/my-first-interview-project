@@ -9,11 +9,8 @@ import cors from 'cors';
 //  import db
 import sequelize from './db/index.js';
 import phone from './db/phoneModel.js';
-import user from './db/userModel.js';
 
 import xlsx from 'xlsx';
-import PhoneModel from './db/phoneModel.js';
-import { where } from 'sequelize';
 
 const app = express();
 app.set('trust proxy', 1);

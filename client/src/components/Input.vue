@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-  import { watch } from 'vue';
+  import { onBeforeUpdate, watch } from 'vue';
 
   let data = defineModel();
   const emit = defineEmits(['input']);
@@ -26,6 +26,15 @@
     placeholder: {
       type: String,
       required: true
+    },
+    value: {
+      type: String,
+      default: ''
     }
+  });
+
+  data = props.value;
+  onBeforeUpdate(() => {
+    data = props.value;
   });
 </script>

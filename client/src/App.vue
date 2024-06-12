@@ -35,25 +35,25 @@
 
           <div class="space-y-4 w-full">
             <div
-              v-for="phone in filteredData"
-              :key="phone.id"
+              v-for="p in filteredData"
+              :key="p.id"
               class="flex justify-start items-center gap-2 w-full">
               <!-- TODO: do it batter -->
               <div
                 class="w-[5px] h-[35px]"
                 :class="{
-                  'bg-red-500': phone.status == 'closed',
-                  'bg-green-500': phone.status == 'done',
-                  'bg-yellow-500': phone.status == 'busy',
-                  'bg-gray-400': phone.status == 'awaiting'
+                  'bg-red-500': p.status == 'closed',
+                  'bg-green-500': p.status == 'done',
+                  'bg-yellow-500': p.status == 'busy',
+                  'bg-gray-400': p.status == 'awaiting'
                 }"></div>
 
               <ul
-                @click="clickedPhone(phone.id)"
+                @click="clickedPhone(p.id)"
                 class="w-full px-10 flex justify-between cursor-pointer">
-                <li class="font-bold">{{ phone.phone }}</li>
+                <li class="font-bold">{{ p.phone }}</li>
                 <li class="font-bold text-center w-24">
-                  {{ phone.attempt }}
+                  {{ p.attempt }}
                 </li>
               </ul>
             </div>
@@ -64,7 +64,12 @@
       <div class="col-span-4 max-xl:col-span-3 h-full">
         <div class="bg-gray-200 h-10 rounded-ss-lg rounded-se-lg">
           <!-- TODO: show the time here -->
-          <div v-if="isPhoneSelected"></div>
+          <div v-if="isPhoneSelected">
+            <p class="text-blue-900 font-bold text-lg">
+              New call (
+              <span class="text-yellow-500">{{ phone.phone }}</span> )
+            </p>
+          </div>
         </div>
 
         <div
@@ -72,18 +77,18 @@
           <div
             v-if="isPhoneSelected"
             class="space-y-10">
-            <!-- <section > -->
             <div class="w-full space-y-5">
               <p class="text-blue-900 font-bold text-xl">information:</p>
 
               <div class="flex gap-10">
                 <Input
+                  :value="phone.name"
                   class="border-b w-1/2"
-                  @input="emitData('name', $event)"
                   label=""
                   placeholder="name" />
 
                 <Input
+                  :value="phone.city"
                   class="border-b w-1/2"
                   label=""
                   placeholder="llll" />
@@ -91,11 +96,13 @@
 
               <div class="flex gap-10">
                 <Input
+                  :value="phone.major"
                   class="border-b w-1/2"
                   label=""
                   placeholder="aaaa" />
 
                 <Input
+                  :value="phone.facebook"
                   class="border-b w-1/2"
                   label=""
                   placeholder="project name" />
@@ -222,7 +229,6 @@
                 Save
               </button>
             </div>
-            <!-- </section> -->
           </div>
           <p
             v-else
@@ -252,12 +258,6 @@
   const filteredData = ref(null);
   const search = ref('');
   const isPhoneSelected = ref(false);
-  const form = reactive({
-    title: '',
-    department: '',
-    status: '',
-    phone: ''
-  });
 
   // multiselect
   const genderOptions = [
@@ -316,12 +316,10 @@
   const emitData = (data, value) => {
     if (data == 'search') {
       search.value = value;
-    } else {
-      form[data] = value;
     }
   };
 
-  const clickedPhone = (id) => {
+  const clickedPhone = async (id) => {
     isPhoneSelected.value = true;
     getPhone(id);
   };
@@ -358,23 +356,22 @@
   };
 
   const sendIt = () => {
-    // TODO: Handle it in backend
-    // if (
-    //   !gender.value ||
-    //   !discount.value ||
-    //   !status.value ||
-    //   !price.value ||
-    //   !explained.value ||
-    //   !attached.value
-    // ) {
-    //   alert('Please fill all fields');
-    //   return;
-    // }
+    if (
+      !gender.value ||
+      !discount.value ||
+      !status.value ||
+      !price.value ||
+      !explained.value ||
+      !attached.value
+    ) {
+      alert('Please fill all fields');
+      return;
+    }
 
-    // if (isNaN(parseFloat(price.value)) && !isFinite(price.value)) {
-    //   alert('Price must be a number');
-    //   return;
-    // }
+    if (isNaN(parseFloat(price.value)) && !isFinite(price.value)) {
+      alert('Price must be a number');
+      return;
+    }
 
     attemptIncrement(phone.value.id);
   };
