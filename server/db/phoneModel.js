@@ -2,21 +2,10 @@ import { DataTypes } from 'sequelize';
 import sequelize from './index.js';
 
 const PhoneModel = sequelize.define('phones', {
-  name: {
-    type: DataTypes.STRING,
-    unique: true
-  },
-  done: {
-    type: DataTypes.BOOLEAN,
-    default: false
-  },
-  closed: {
-    type: DataTypes.BOOLEAN,
-    default: false
-  },
-  busy: {
-    type: DataTypes.BOOLEAN,
-    default: false
+  status: {
+    type: DataTypes.ENUM,
+    values: ['done', 'closed', 'busy', 'awaiting'],
+    defaultValue: 'awaiting'
   },
   phone: {
     type: DataTypes.STRING,

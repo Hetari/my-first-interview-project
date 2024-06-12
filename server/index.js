@@ -9,6 +9,7 @@ import cors from 'cors';
 //  import db
 import sequelize from './db/index.js';
 import phone from './db/phoneModel.js';
+import user from './db/userModel.js';
 
 import xlsx from 'xlsx';
 import PhoneModel from './db/phoneModel.js';
@@ -66,6 +67,42 @@ app.get('/api/v1/phones/:id', async (req, res) => {
   });
 
   return res.status(200).json({ phone: getPhone });
+});
+
+app.put('/api/v1/phones/:id', async (req, res) => {
+  const id = req.params.id;
+  const { status } = req.body;
+
+  if (!status || !id) {
+    return res.status(400).send('Bad request!');
+  }
+
+  if (isNaN(parseInt(id))) {
+    return res.status(400).send('Bad request!');
+  }
+
+  const result = await phone.findOne({
+    where: {
+      id: parseInt(id)
+    }
+  });
+  if (!result) {
+    return res.status(400).send('Bad request!');
+  }
+  if (['awaiting', 'busy'].includes(status)) {
+    result.update({
+      status,
+      attempt: result.attempt + 1
+    });
+  } else if (['done', 'closed'].includes(status)) {
+    result.update({
+      status
+    });
+  } else {
+    return res.status(400).send('Bad request!');
+  }
+
+  return res.status(200).json({ phone: result });
 });
 
 app.post('/test', (req, res) => {

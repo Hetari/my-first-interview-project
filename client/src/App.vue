@@ -42,10 +42,10 @@
               <div
                 class="w-[5px] h-[35px]"
                 :class="{
-                  'bg-red-500': phone.closed == true,
-                  'bg-green-500': phone.done == true,
-                  'bg-yellow-500': phone.busy == true,
-                  'bg-gray-400': !phone.closed && !phone.busy && !phone.done
+                  'bg-red-500': phone.status == 'closed',
+                  'bg-green-500': phone.status == 'done',
+                  'bg-yellow-500': phone.status == 'busy',
+                  'bg-gray-400': phone.status == 'awaiting'
                 }"></div>
 
               <ul
@@ -329,10 +329,10 @@
   const getAllPhones = () => {
     axios.get('http://localhost:3000/api/v1/phones').then((res) => {
       if (res.data) {
-        data.value = res.data.phones;
-        filteredData.value = res.data.phones.sort(
-          (a, b) => b.attempt - a.attempt
+        data.value = res.data.phones.filter(
+          (phone) => !['done', 'closed'].includes(phone.status)
         );
+        filteredData.value = data.value.sort((a, b) => a.attempt - b.attempt);
       }
     });
   };
@@ -340,44 +340,43 @@
     axios.get(`http://localhost:3000/api/v1/phones/${id}`).then((res) => {
       if (res.data) {
         phone.value = res.data.phone;
+        status.value = res.data.phone.status;
       }
     });
   };
 
-  const sendIt = () => {
-    // TODO: Handle it in backend
-    if (
-      !gender.value ||
-      !discount.value ||
-      !status.value ||
-      !price.value ||
-      !explained.value ||
-      !attached.value
-    ) {
-      alert('Please fill all fields');
-      return;
-    }
-
-    if (isNaN(parseFloat(price.value)) && !isFinite(price.value)) {
-      alert('Price must be a number');
-      return;
-    }
-
+  const attemptIncrement = (id) => {
     axios
-      .post(`http://localhost:3000/api/v1/phones/${phone.value.id}`, {
-        gender: gender.value,
-        discount: discount.value,
-        status: status.value,
-        price: price.value,
-        explained: explained.value,
-        attached: attached.value
+      .put(`http://localhost:3000/api/v1/phones/${id}`, {
+        status: status.value
       })
       .then((res) => {
         if (res.data) {
           getAllPhones();
-          isPhoneSelected.value = false;
         }
       });
+  };
+
+  const sendIt = () => {
+    // TODO: Handle it in backend
+    // if (
+    //   !gender.value ||
+    //   !discount.value ||
+    //   !status.value ||
+    //   !price.value ||
+    //   !explained.value ||
+    //   !attached.value
+    // ) {
+    //   alert('Please fill all fields');
+    //   return;
+    // }
+
+    // if (isNaN(parseFloat(price.value)) && !isFinite(price.value)) {
+    //   alert('Price must be a number');
+    //   return;
+    // }
+
+    attemptIncrement(phone.value.id);
   };
 
   onMounted(() => {
