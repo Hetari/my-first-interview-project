@@ -142,6 +142,7 @@
                     <span class="text-red-500">*</span>
                   </p>
                   <Input
+                    @input="price = $event"
                     class="w-11/12"
                     label=""
                     placeholder="value" />
@@ -162,8 +163,8 @@
                       selected>
                       select an answer
                     </option>
-                    <option value="female">انثى</option>
                     <option value="male">ذكر</option>
+                    <option value="female">انثى</option>
                   </select>
                 </div>
 
@@ -189,6 +190,31 @@
               </div>
             </div>
 
+            <div class="w-full flex max-lg:flex-col gap-5">
+              <div class="w-2/3 max-lg:w-full">
+                <p class="text-blue-900 font-bold text-xl">Notes:</p>
+                <textarea
+                  class="w-full h-40 p-3 border rounded outline-none focus:outline-none bg-gray-200"
+                  placeholder="notes"
+                  name="notes"
+                  id=""></textarea>
+              </div>
+
+              <div class="w-1/3 max-lg:w-full">
+                <p class="text-blue-900 font-bold text-xl">Status:</p>
+
+                <Multiselect
+                  class="p-1"
+                  mode="single"
+                  placeholder="Search and
+                select your answer"
+                  :searchable="true"
+                  :close-on-select="false"
+                  v-model="status"
+                  :options="statusOptions" />
+              </div>
+            </div>
+
             <div
               @click="sendIt"
               class="text-end">
@@ -207,6 +233,7 @@
       </div>
     </section>
   </main>
+  {{ gender }} {{ discount }} {{ price }} {{ explained }} {{ attached }}
 </template>
 
 <script setup>
@@ -261,8 +288,30 @@
       value: 'online'
     }
   ];
+  const statusOptions = [
+    {
+      label: 'Awaiting',
+      value: 'awaiting'
+    },
+    {
+      label: 'Busy/Not Answered',
+      value: 'busy'
+    },
+    {
+      label: 'Closed',
+      value: 'closed'
+    },
+    {
+      label: 'Recalled incoming',
+      value: 'done'
+    }
+  ];
   const gender = defineModel('gender');
   const discount = defineModel('discount');
+  const status = defineModel('status');
+  const price = defineModel('price');
+  const explained = defineModel('explained');
+  const attached = defineModel('attached');
 
   const emitData = (data, value) => {
     if (data == 'search') {
@@ -290,9 +339,45 @@
   const getPhone = (id) => {
     axios.get(`http://localhost:3000/api/v1/phones/${id}`).then((res) => {
       if (res.data) {
-        phone.value = res.data;
+        phone.value = res.data.phone;
       }
     });
+  };
+
+  const sendIt = () => {
+    // TODO: Handle it in backend
+    if (
+      !gender.value ||
+      !discount.value ||
+      !status.value ||
+      !price.value ||
+      !explained.value ||
+      !attached.value
+    ) {
+      alert('Please fill all fields');
+      return;
+    }
+
+    if (isNaN(parseFloat(price.value)) && !isFinite(price.value)) {
+      alert('Price must be a number');
+      return;
+    }
+
+    axios
+      .post(`http://localhost:3000/api/v1/phones/${phone.value.id}`, {
+        gender: gender.value,
+        discount: discount.value,
+        status: status.value,
+        price: price.value,
+        explained: explained.value,
+        attached: attached.value
+      })
+      .then((res) => {
+        if (res.data) {
+          getAllPhones();
+          isPhoneSelected.value = false;
+        }
+      });
   };
 
   onMounted(() => {
