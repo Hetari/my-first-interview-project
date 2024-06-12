@@ -14,11 +14,11 @@
           placeholder="Search"
           @input="emitData('search', $event)" />
 
-        <div class="space-y-4">
+        <div class="space-y-4 w-full">
           <div
-            v-for="(phone, index) in data"
+            v-for="phone in data"
             :key="phone.id"
-            class="flex justify-start items-center gap-2">
+            class="flex justify-start items-center gap-2 w-full">
             <div
               class="w-[5px] h-[35px]"
               :class="{
@@ -28,10 +28,14 @@
                 'bg-gray-400': !phone.closed && !phone.busy && !phone.done
               }"></div>
 
-            <router-link :to="`/phone/${phone.id}`">
-              <ul class="px-10 flex justify-between w-full">
+            <router-link
+              class="w-full"
+              :to="`/phone/${phone.id}`">
+              <ul class="px-10 flex justify-between">
                 <li class="font-bold">{{ phone.phone }}</li>
-                <li class="font-bold">{{ phoneAttempt['attempt'] }}</li>
+                <li class="font-bold text-center w-24">
+                  {{ phone.attempt }}
+                </li>
               </ul>
             </router-link>
           </div>
@@ -54,7 +58,6 @@
   import Input from '../components/Input.vue';
   import { onMounted, reactive, ref } from 'vue';
   import axios from 'axios';
-  import { phoneAttempt } from '../store.js';
 
   const form = reactive({
     search: ''
@@ -70,11 +73,6 @@
     axios.get('http://localhost:3000/api/v1/phones').then((res) => {
       if (res.data) {
         data.value = res.data.phones;
-
-        data.value.forEach((phone) => {
-          phoneAttempt.id = phone.phone;
-          phoneAttempt.attempt = 0;
-        });
       }
     });
   });

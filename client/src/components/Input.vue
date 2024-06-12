@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-  import { watch } from 'vue';
+  import { onMounted, watch } from 'vue';
 
   let data = defineModel();
   const emit = defineEmits(['input']);
@@ -18,7 +18,7 @@
     emit('input', newVal);
   });
 
-  defineProps({
+  const props = defineProps({
     label: {
       type: String,
       required: true

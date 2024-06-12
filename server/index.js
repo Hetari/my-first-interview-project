@@ -26,6 +26,17 @@ app.get('/api/v1/phones', async (req, res) => {
   return res.status(200).json({ phones: allPhones });
 });
 
+app.get('/api/v1/phones/:id', async (req, res) => {
+  const id = req.params.id;
+  const getPhone = await phone.findOne({
+    where: {
+      id: parseInt(id)
+    }
+  });
+
+  return res.status(200).json({ phone: getPhone });
+});
+
 app.post('/test', (req, res) => {
   return res.status(200).send('Hello World!');
 });

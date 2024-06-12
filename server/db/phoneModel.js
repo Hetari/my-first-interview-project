@@ -41,6 +41,10 @@ const PhoneModel = sequelize.define('phones', {
   facebook: {
     type: DataTypes.STRING,
     allowNull: true
+  },
+  attempt: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
   }
 });
 
