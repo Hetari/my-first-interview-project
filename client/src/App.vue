@@ -38,7 +38,6 @@
               v-for="p in filteredData"
               :key="p.id"
               class="flex justify-start items-center gap-2 w-full">
-              <!-- TODO: do it batter -->
               <div
                 class="w-[5px] h-[35px]"
                 :class="{
@@ -63,11 +62,61 @@
 
       <div class="col-span-4 max-xl:col-span-3 h-full">
         <div class="bg-gray-200 h-10 rounded-ss-lg rounded-se-lg">
-          <!-- TODO: show the time here -->
-          <div v-if="isPhoneSelected">
+          <div
+            class="flex justify-between items-center px-10 h-full"
+            v-if="isPhoneSelected">
             <p class="text-blue-900 font-bold text-lg">
               New call (
               <span class="text-yellow-500">{{ phone.phone }}</span> )
+            </p>
+
+            <p>{{ formattedTimer }}</p>
+
+            <p>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="32"
+                height="32"
+                color="#000000"
+                fill="none">
+                <circle
+                  cx="12"
+                  cy="13"
+                  r="9"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round" />
+                <path
+                  d="M5 19L3 21M19 19L21 21"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path
+                  d="M19 3.5697L19.5955 3.27195C20.4408 2.84932 20.7583 2.89769 21.4303 3.5697C22.1023 4.2417 22.1507 4.55924 21.728 5.4045L21.4303 6M5 3.5697L4.4045 3.27195C3.55924 2.84932 3.2417 2.89769 2.5697 3.5697C1.89769 4.2417 1.84932 4.55924 2.27195 5.4045L2.5697 6"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round" />
+                <path
+                  d="M12 9.5V13.5L14 15.5"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path
+                  d="M12 3.5V2"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path
+                  d="M10 2H14"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
             </p>
           </div>
         </div>
@@ -250,7 +299,7 @@
 
   import Multiselect from '@vueform/multiselect';
 
-  import { onMounted, reactive, ref, watch } from 'vue';
+  import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
   import axios from 'axios';
 
   const data = ref(null);
@@ -258,6 +307,10 @@
   const filteredData = ref(null);
   const search = ref('');
   const isPhoneSelected = ref(false);
+
+  const hour = ref(0);
+  const minute = ref(0);
+  const second = ref(0);
 
   // multiselect
   const genderOptions = [
@@ -319,7 +372,7 @@
     }
   };
 
-  const clickedPhone = async (id) => {
+  const clickedPhone = (id) => {
     isPhoneSelected.value = true;
     getPhone(id);
   };
@@ -335,12 +388,18 @@
     });
   };
   const getPhone = (id) => {
-    axios.get(`http://localhost:3000/api/v1/phones/${id}`).then((res) => {
-      if (res.data) {
-        phone.value = res.data.phone;
-        status.value = res.data.phone.status;
-      }
-    });
+    axios
+      .get(`http://localhost:3000/api/v1/phones/${id}`)
+      .then((res) => {
+        if (res.data) {
+          phone.value = res.data.phone;
+          status.value = res.data.phone.status;
+        }
+      })
+      .then(() => {
+        stopTimer();
+        startTimer();
+      });
   };
 
   const attemptIncrement = (id) => {
@@ -376,8 +435,47 @@
     attemptIncrement(phone.value.id);
   };
 
+  let timer;
+  const startTimer = () => {
+    timer = setInterval(() => {
+      second.value++;
+      if (second.value == 60) {
+        second.value = 0;
+        minute.value++;
+      }
+      if (minute.value == 60) {
+        minute.value = 0;
+        hour.value++;
+      }
+    }, 1000);
+  };
+
+  const stopTimer = () => {
+    hour.value = 0;
+    minute.value = 0;
+    second.value = 0;
+
+    if (timer) {
+      clearInterval(timer);
+    }
+  };
+
+  const padNumber = (num) => {
+    return num.toString().padStart(2, '0');
+  };
+
+  const formattedTimer = computed(() => {
+    return `${padNumber(hour.value)}:${padNumber(minute.value)}:${padNumber(
+      second.value
+    )}`;
+  });
+
   onMounted(() => {
     getAllPhones();
+  });
+
+  onUnmounted(() => {
+    stopTimer();
   });
 
   watch(search, (newVal) => {
