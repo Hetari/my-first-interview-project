@@ -1,5 +1,4 @@
 <template>
-  search: {{ search }}
   <main
     class="h-screen px-4 py-2 sm:px-6 sm:py-4 md:px-8 md:py-6 lg:px-12 lg:py-8">
     <Header />
@@ -31,7 +30,7 @@
           <Input
             class="w-full py-3 ps-5"
             placeholder="Search"
-            @input="emitData('search', $event)" />
+            v-model="searchModel" />
 
           <div class="space-y-4 w-full">
             <div
@@ -173,7 +172,7 @@
                     placeholder="Search and select your answer"
                     :searchable="true"
                     :close-on-select="false"
-                    v-model="gender"
+                    v-model="genderModel"
                     :options="genderOptions" />
                 </div>
 
@@ -188,7 +187,7 @@
                     placeholder="Search and select your answer"
                     :searchable="true"
                     :close-on-select="false"
-                    v-model="discount"
+                    v-model="discountModel"
                     :options="discountOptions" />
                 </div>
 
@@ -197,11 +196,11 @@
                     كم دفعتي قيمة القسيمة؟
                     <span class="text-red-500">*</span>
                   </p>
-                  <FakeInput
-                    @input="price = $event"
+                  <Input
                     class="w-11/12"
                     label=""
-                    placeholder="value" />
+                    placeholder="value"
+                    v-model="priceModel" />
                 </div>
               </div>
 
@@ -212,7 +211,7 @@
                     <span class="text-red-500">*</span>
                   </p>
                   <select
-                    v-model="explained"
+                    v-model="explainedModel"
                     class="w-11/12 p-3">
                     <option
                       disabled
@@ -230,7 +229,7 @@
                     <span class="text-red-500">*</span>
                   </p>
                   <select
-                    v-model="attached"
+                    v-model="attachedModel"
                     class="w-11/12 p-3">
                     <option
                       disabled
@@ -266,15 +265,15 @@
                 select your answer"
                   :searchable="true"
                   :close-on-select="false"
-                  v-model="status"
+                  v-model="statusModel"
                   :options="statusOptions" />
               </div>
             </div>
 
-            <div
-              @click="sendIt"
-              class="text-end">
-              <button class="bg-blue-900 text-white px-5 py-3 rounded-lg">
+            <div class="text-end">
+              <button
+                @click="sendIt"
+                class="bg-blue-900 text-white px-5 py-3 rounded-lg">
                 Save
               </button>
             </div>
@@ -288,7 +287,13 @@
       </div>
     </section>
   </main>
-  {{ gender }} {{ discount }} {{ price }} {{ explained }} {{ attached }}
+  <pre>
+    gender: {{ genderModel }},
+    discount: {{ discountModel }}, 
+    price: {{ priceModel }},
+    explained: {{ explainedModel }},
+    attached: {{ attachedModel }},
+  </pre>
 </template>
 
 <script setup>
@@ -304,9 +309,8 @@
   import axios from 'axios';
 
   const data = ref(null);
-  const phone = ref(null);
+  const phone = ref({});
   const filteredData = ref(null);
-  const search = ref('');
   const isPhoneSelected = ref(false);
 
   const hour = ref(0);
@@ -360,26 +364,30 @@
       value: 'done'
     }
   ];
-  const gender = defineModel('gender');
-  const discount = defineModel('discount');
-  const status = defineModel('status');
-  const price = defineModel('price');
-  const explained = defineModel('explained');
-  const attached = defineModel('attached');
+  const genderModel = defineModel('gender');
+  const discountModel = defineModel('discount');
+  const statusModel = defineModel('status');
+  const priceModel = defineModel('price');
+  const explainedModel = defineModel('explained');
+  const attachedModel = defineModel('attached');
+  const searchModel = defineModel('search');
 
-  const emitData = (data, value) => {
-    if (data == 'search') {
-      // If the user erase the input then remove the last index
-      if (!value.data) {
-        let temp = search.value.split('');
-        temp.pop();
-        search.value = temp.join('');
-        return;
-      }
-
-      // if the user enter any input add it into the search and filter it
-      search.value += value.data;
-    }
+  const emitData = (data, event) => {
+    // if (data == 'price') {
+    //   if (!event.data) {
+    //     let temp = price.value.split('');
+    //     temp.pop();
+    //     price.value = temp.join('');
+    //     return;
+    //   }
+    //   // if there is no information about price, we will store it
+    //   if (!price.value) {
+    //     price.value = event.data;
+    //     return;
+    //   }
+    //   // otherwise we will add the any input into the variable
+    //   price.value += event.data;
+    // }
   };
 
   const clickedPhone = (id) => {
@@ -403,7 +411,7 @@
       .then((res) => {
         if (res.data) {
           phone.value = res.data.phone;
-          status.value = res.data.phone.status;
+          statusModel.value = res.data.phone.status;
         }
       })
       .then(() => {
@@ -415,7 +423,7 @@
   const attemptIncrement = (id) => {
     axios
       .put(`http://localhost:3000/api/v1/phones/${id}`, {
-        status: status.value
+        status: statusModel.value
       })
       .then((res) => {
         if (res.data) {
@@ -426,18 +434,18 @@
 
   const sendIt = () => {
     if (
-      !gender.value ||
-      !discount.value ||
-      !status.value ||
-      !price.value ||
-      !explained.value ||
-      !attached.value
+      !genderModel.value ||
+      !discountModel.value ||
+      !statusModel.value ||
+      !priceModel.value ||
+      !explainedModel.value ||
+      !attachedModel.value
     ) {
       alert('Please fill all fields');
       return;
     }
 
-    if (isNaN(parseFloat(price.value)) && !isFinite(price.value)) {
+    if (isNaN(parseFloat(priceModel.value)) && !isFinite(priceModel.value)) {
       alert('Price must be a number');
       return;
     }
@@ -488,7 +496,7 @@
     stopTimer();
   });
 
-  watch(search, (newVal) => {
+  watch(searchModel, (newVal) => {
     // If the user erase the all search field, then no need to flitter it by null or empty string
     if (newVal === '') {
       filteredData.value = data.value.sort((a, b) => a.attempt - b.attempt);

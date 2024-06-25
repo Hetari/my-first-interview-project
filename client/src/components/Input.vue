@@ -14,8 +14,8 @@
 
   let data = defineModel();
   const emit = defineEmits(['search']);
-  watch(data, (newVal) => {
-    emit('search', newVal);
+  watch(data, () => {
+    emit('search', data.value);
   });
 
   const props = defineProps({
@@ -26,15 +26,6 @@
     placeholder: {
       type: String,
       required: true
-    },
-    value: {
-      type: String,
-      default: ''
     }
-  });
-
-  data = props.value;
-  onBeforeUpdate(() => {
-    data = props.value;
   });
 </script>
