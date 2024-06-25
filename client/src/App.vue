@@ -28,7 +28,7 @@
 
         <div class="bg-gray-100 pb-5 rounded-ee-lg rounded-es-lg">
           <Input
-            class="w-full py-3 ps-5"
+            class="w-full py-3 relative ps-5"
             placeholder="Search"
             v-model="searchModel" />
 
@@ -160,7 +160,7 @@
             <div class="w-full space-y-5">
               <p class="text-blue-900 font-bold text-xl">Questions:</p>
 
-              <div class="flex w-full gap-5">
+              <div class="flex w-full gap-10">
                 <div class="w-full">
                   <p class="text-blue-900 font-bold">
                     الجنس؟
@@ -191,36 +191,32 @@
                     :options="discountOptions" />
                 </div>
 
-                <div class="w-full">
+                <div class="w-full relative">
                   <p class="text-blue-900 font-bold">
                     كم دفعتي قيمة القسيمة؟
                     <span class="text-red-500">*</span>
                   </p>
                   <Input
-                    class="w-11/12"
+                    class="w-11/12 inline bg-gray-200"
                     label=""
                     placeholder="value"
                     v-model="priceModel" />
                 </div>
               </div>
 
-              <div class="flex w-full">
+              <div class="flex w-full gap-10">
                 <div class="w-full">
                   <p class="text-blue-900 font-bold">
                     هل شرحت لكي الموزعة عن الخدمات التي تقدمها القسيمة؟
                     <span class="text-red-500">*</span>
                   </p>
-                  <select
+                  <Multiselect
+                    class="w-11/12 p-1"
+                    mode="single"
+                    placeholder="Select your answer"
+                    :close-on-select="false"
                     v-model="explainedModel"
-                    class="w-11/12 p-3">
-                    <option
-                      disabled
-                      selected>
-                      select an answer
-                    </option>
-                    <option value="male">ذكر</option>
-                    <option value="female">انثى</option>
-                  </select>
+                    :options="yesOrNoOptions" />
                 </div>
 
                 <div class="w-full">
@@ -228,17 +224,13 @@
                     هل تم تقديم مرفق صحي معين للزيارة؟
                     <span class="text-red-500">*</span>
                   </p>
-                  <select
+                  <Multiselect
+                    class="w-11/12 p-1"
+                    mode="single"
+                    placeholder="Select your answer"
+                    :close-on-select="false"
                     v-model="attachedModel"
-                    class="w-11/12 p-3">
-                    <option
-                      disabled
-                      selected>
-                      select an answer
-                    </option>
-                    <option value="female">انثى</option>
-                    <option value="male">ذكر</option>
-                  </select>
+                    :options="yesOrNoOptions" />
                 </div>
 
                 <div class="w-full"></div>
@@ -364,6 +356,17 @@
       value: 'done'
     }
   ];
+  const yesOrNoOptions = [
+    {
+      label: 'نعم',
+      value: 'true'
+    },
+    {
+      label: 'لا',
+      value: 'false'
+    }
+  ];
+
   const genderModel = defineModel('gender');
   const discountModel = defineModel('discount');
   const statusModel = defineModel('status');
