@@ -1,14 +1,15 @@
 <template>
+  search: {{ search }}
   <main
     class="h-screen px-4 py-2 sm:px-6 sm:py-4 md:px-8 md:py-6 lg:px-12 lg:py-8">
     <Header />
 
     <section class="flex gap-4 mb-2">
-      <Input
+      <!-- TODO: fix the value with phone number -->
+      <FakeInput
         v-for="i in inputsFields"
         :label="i.title"
-        @input="emitData(i.emit, $event)"
-        :placeholder="i.placeholder" />
+        :value="i.value" />
 
       <DateComponent
         :placeholder="''"
@@ -21,7 +22,7 @@
     <section class="grid grid-cols-5 mt-5 gap-5">
       <div class="col-span-1 max-xl:col-span-2">
         <div
-          class="bg-gray-200 h-10 rounded-ss-lg rounded-se-lg px-10 flex justify-between items-center">
+          class="select-none bg-gray-200 h-10 rounded-ss-lg rounded-se-lg px-10 flex justify-between items-center">
           <p class="text-blue-900 font-bold text-lg">Phones</p>
           <p class="text-blue-900 font-bold text-lg text">Attempts (0)</p>
         </div>
@@ -29,7 +30,6 @@
         <div class="bg-gray-100 pb-5 rounded-ee-lg rounded-es-lg">
           <Input
             class="w-full py-3 ps-5"
-            label=""
             placeholder="Search"
             @input="emitData('search', $event)" />
 
@@ -130,13 +130,13 @@
               <p class="text-blue-900 font-bold text-xl">information:</p>
 
               <div class="flex gap-10">
-                <Input
+                <FakeInput
                   :value="phone.name"
                   class="border-b w-1/2"
                   label=""
                   placeholder="name" />
 
-                <Input
+                <FakeInput
                   :value="phone.city"
                   class="border-b w-1/2"
                   label=""
@@ -144,13 +144,13 @@
               </div>
 
               <div class="flex gap-10">
-                <Input
+                <FakeInput
                   :value="phone.major"
                   class="border-b w-1/2"
                   label=""
                   placeholder="aaaa" />
 
-                <Input
+                <FakeInput
                   :value="phone.facebook"
                   class="border-b w-1/2"
                   label=""
@@ -197,7 +197,7 @@
                     كم دفعتي قيمة القسيمة؟
                     <span class="text-red-500">*</span>
                   </p>
-                  <Input
+                  <FakeInput
                     @input="price = $event"
                     class="w-11/12"
                     label=""
@@ -292,6 +292,7 @@
 </template>
 
 <script setup>
+  import FakeInput from './components/FakeInput.vue';
   import Input from './components/Input.vue';
   import DateComponent from './components/DateComponent.vue';
   import Header from './components/Header.vue';
@@ -368,7 +369,16 @@
 
   const emitData = (data, value) => {
     if (data == 'search') {
-      search.value = value;
+      // If the user erase the input then remove the last index
+      if (!value.data) {
+        let temp = search.value.split('');
+        temp.pop();
+        search.value = temp.join('');
+        return;
+      }
+
+      // if the user enter any input add it into the search and filter it
+      search.value += value.data;
     }
   };
 
@@ -479,6 +489,11 @@
   });
 
   watch(search, (newVal) => {
+    // If the user erase the all search field, then no need to flitter it by null or empty string
+    if (newVal === '') {
+      filteredData.value = data.value.sort((a, b) => a.attempt - b.attempt);
+      return;
+    }
     filteredData.value = data.value.filter((phone) => {
       return phone.phone.includes(newVal);
     });
@@ -488,26 +503,24 @@
     {
       id: 0,
       title: 'Task name',
-      placeholder: 'Brhoom',
-      emit: 'title'
+      value: 'Task no 1'
     },
     {
       id: 1,
       title: 'Department',
-      placeholder: 'Department',
-      emit: 'department'
+      value: 'CS Department'
     },
     {
       id: 2,
       title: 'Status',
-      placeholder: 'Status',
-      emit: 'status'
+      // TODO: getTaskStatus()
+      value: 'Await'
     },
     {
       id: 3,
       title: 'Phone',
-      placeholder: 'Phone',
-      emit: 'phone'
+      // TODO: getTaskPhone()
+      value: '77xxxxxxx'
     }
   ];
 </script>

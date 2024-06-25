@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <p class="font-bold text-blue-900">{{ label }}</p>
     <input
       v-model="data"
@@ -13,15 +13,15 @@
   import { onBeforeUpdate, watch } from 'vue';
 
   let data = defineModel();
-  const emit = defineEmits(['input']);
+  const emit = defineEmits(['search']);
   watch(data, (newVal) => {
-    emit('input', newVal);
+    emit('search', newVal);
   });
 
   const props = defineProps({
     label: {
       type: String,
-      required: true
+      default: ''
     },
     placeholder: {
       type: String,
