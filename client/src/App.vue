@@ -197,9 +197,10 @@
                     <span class="text-red-500">*</span>
                   </p>
                   <Input
-                    class="w-11/12 inline bg-gray-200"
+                    class="w-11/12 rounded inline bg-gray-200"
                     label=""
                     placeholder="value"
+                    :isNumber="true"
                     v-model="priceModel" />
                 </div>
               </div>
@@ -279,13 +280,6 @@
       </div>
     </section>
   </main>
-  <pre>
-    gender: {{ genderModel }},
-    discount: {{ discountModel }}, 
-    price: {{ priceModel }},
-    explained: {{ explainedModel }},
-    attached: {{ attachedModel }},
-  </pre>
 </template>
 
 <script setup>
@@ -376,21 +370,7 @@
   const searchModel = defineModel('search');
 
   const emitData = (data, event) => {
-    // if (data == 'price') {
-    //   if (!event.data) {
-    //     let temp = price.value.split('');
-    //     temp.pop();
-    //     price.value = temp.join('');
-    //     return;
-    //   }
-    //   // if there is no information about price, we will store it
-    //   if (!price.value) {
-    //     price.value = event.data;
-    //     return;
-    //   }
-    //   // otherwise we will add the any input into the variable
-    //   price.value += event.data;
-    // }
+    // TODO: store the date
   };
 
   const clickedPhone = (id) => {

@@ -7,9 +7,9 @@
     </p>
     <input
       v-model="data"
-      type="text"
+      :type="isNumber ? 'number' : 'text'"
       :placeholder="placeholder"
-      class="bg-gray-100 rounded p-2 text-blue-900 outline-none focus:outline-none"
+      class="bg-gray-100 w-full p-2 text-blue-900 outline-none focus:outline-none"
       :class="$attrs.class" />
   </div>
 </template>
@@ -31,6 +31,10 @@
     placeholder: {
       type: String,
       required: true
+    },
+    isNumber: {
+      type: Boolean,
+      default: false
     }
   });
 </script>
