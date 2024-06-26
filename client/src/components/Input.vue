@@ -1,5 +1,7 @@
 <template>
-  <div class="inline-block w-full absolute bottom-0 left-0">
+  <div
+    class="inline-block w-full"
+    :class="$attrs.class">
     <p
       v-if="label.length > 0"
       class="font-bold text-blue-900">

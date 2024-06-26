@@ -121,7 +121,7 @@
         </div>
 
         <div
-          class="bg-gray-100 h-[100%] rounded-ee-lg rounded-es-lg space-y-10 w-full p-10">
+          class="bg-gray-100 h-[94%] rounded-ee-lg rounded-es-lg space-y-10 w-full p-10">
           <div
             v-if="isPhoneSelected"
             class="space-y-10">
@@ -160,8 +160,10 @@
             <div class="w-full space-y-5">
               <p class="text-blue-900 font-bold text-xl">Questions:</p>
 
-              <div class="flex w-full gap-10">
-                <div class="w-full">
+              <div class="grid grid-cols-12 gap-5">
+                <!-- <div class="flex w-full gap-10"> -->
+                <div
+                  class="w-full max-md: col-span-full lg:col-span-6 xl:col-span-4">
                   <p class="text-blue-900 font-bold">
                     الجنس؟
                     <span class="text-red-500">*</span>
@@ -171,12 +173,12 @@
                     mode="single"
                     placeholder="Search and select your answer"
                     :searchable="true"
-                    :close-on-select="false"
                     v-model="genderModel"
                     :options="genderOptions" />
                 </div>
 
-                <div class="w-full">
+                <div
+                  class="w-full max-md: col-span-full lg:col-span-6 xl:col-span-4">
                   <p class="text-blue-900 font-bold">
                     من أين حصلت على القسيمة؟
                     <span class="text-red-500">*</span>
@@ -186,27 +188,27 @@
                     mode="tags"
                     placeholder="Search and select your answer"
                     :searchable="true"
-                    :close-on-select="false"
                     v-model="discountModel"
                     :options="discountOptions" />
                 </div>
 
-                <div class="w-full relative">
+                <div
+                  class="w-full max-md: col-span-full lg:col-span-6 xl:col-span-4 relative h-full">
                   <p class="text-blue-900 font-bold">
                     كم دفعتي قيمة القسيمة؟
                     <span class="text-red-500">*</span>
                   </p>
                   <Input
-                    class="w-11/12 rounded inline bg-gray-200"
+                    class="relative lg:absolute lg:bottom-0 lg:left-0 w-11/12 rounded inline bg-gray-200"
                     label=""
                     placeholder="value"
                     :isNumber="true"
                     v-model="priceModel" />
                 </div>
-              </div>
 
-              <div class="flex w-full gap-10">
-                <div class="w-full">
+                <!-- <div class="flex w-full gap-10"> -->
+                <div
+                  class="w-full max-md: col-span-full lg:col-span-6 xl:col-span-4">
                   <p class="text-blue-900 font-bold">
                     هل شرحت لكي الموزعة عن الخدمات التي تقدمها القسيمة؟
                     <span class="text-red-500">*</span>
@@ -215,12 +217,12 @@
                     class="w-11/12 p-1"
                     mode="single"
                     placeholder="Select your answer"
-                    :close-on-select="false"
                     v-model="explainedModel"
                     :options="yesOrNoOptions" />
                 </div>
 
-                <div class="w-full">
+                <div
+                  class="w-full max-md: col-span-full lg:col-span-6 xl:col-span-4">
                   <p class="text-blue-900 font-bold">
                     هل تم تقديم مرفق صحي معين للزيارة؟
                     <span class="text-red-500">*</span>
@@ -229,12 +231,12 @@
                     class="w-11/12 p-1"
                     mode="single"
                     placeholder="Select your answer"
-                    :close-on-select="false"
                     v-model="attachedModel"
                     :options="yesOrNoOptions" />
                 </div>
 
-                <div class="w-full"></div>
+                <div
+                  class="w-full max-md: col-span-full lg:col-span-6 xl:col-span-4"></div>
               </div>
             </div>
 
@@ -257,7 +259,6 @@
                   placeholder="Search and
                 select your answer"
                   :searchable="true"
-                  :close-on-select="false"
                   v-model="statusModel"
                   :options="statusOptions" />
               </div>
